@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCare CRM Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            margin: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .user-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .user-info p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .role-owner {
+            background: #28a745;
+            color: white;
+        }
+        
+        .role-admin {
+            background: #007bff;
+            color: white;
+        }
+        
+        .role-user {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loginForm">
+            <div class="header">
+                <h1>🔐 Admin Login</h1>
+                <p>Software Owner Access Only</p>
+            </div>
+            
+            <div id="loginAlert" class="alert hidden"></div>
+            
+            <form id="loginFormElement">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    <span id="loginBtnText">Login</span>
+                    <span id="loginLoader" class="loading hidden"></span>
+                </button>
+            </form>
+        </div>
+        
+        <div id="dashboard" class="hidden">
+            <div class="header">
+                <h1>👑 Owner Dashboard</h1>
+                <p>User Management System</p>
+            </div>
+            
+            <div id="userInfo" class="user-info">
+                <h3 id="userName"></h3>
+                <p id="userEmail"></p>
+                <span id="userRole" class="role-badge"></span>
+            </div>
+            
+            <div id="dashboardAlert" class="alert hidden"></div>
+            
+            <button id="showCreateUserBtn" class="btn btn-secondary">Create New User</button>
+            <button id="logoutBtn" class="btn btn-danger">Logout</button>
+        </div>
+        
+        <div id="createUserForm" class="hidden">
+            <div class="header">
+                <h1>👤 Create New User</h1>
+                <p>Add a new user to the system</p>
+            </div>
+            
+            <div id="createUserAlert" class="alert hidden"></div>
+            
+            <form id="createUserFormElement">
+                <div class="form-group">
+                    <label for="userName">Full Name</label>
+                    <input type="text" id="userName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail">Email Address</label>
+                    <input type="email" id="userEmail" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userPassword">Password</label>
+                    <input type="password" id="userPassword" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userRole">Role</label>
+                    <select id="userRole" name="role" required>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="createUserBtn">
+                    <span id="createUserBtnText">Create User</span>
+                    <span id="createUserLoader" class="loading hidden"></span>
+                </button>
+                
+                <button type="button" id="backToDashboardBtn" class="btn btn-secondary">Back to Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = null;
+        
+        const loginForm = document.getElementById('loginForm');
+        const dashboard = document.getElementById('dashboard');
+        const createUserForm = document.getElementById('createUserForm');
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            if (authToken) {
+                checkAuthStatus();
+            } else {
+                showLogin();
+            }
+            
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+            document.getElementById('showCreateUserBtn').addEventListener('click', showCreateUserForm);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            document.getElementById('createUserFormElement').addEventListener('submit', handleCreateUser);
+            document.getElementById('backToDashboardBtn').addEventListener('click', showDashboard);
+        }
+        
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch('/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    
+                    if (currentUser.role === 'owner') {
+                        showDashboard();
+                    } else {
+                        showAlert('loginAlert', 'Access denied. Owner privileges required.', 'error');
+                        localStorage.removeItem('authToken');
+                        authToken = null;
+                        showLogin();
+                    }
+                } else {
+                    localStorage.removeItem('authToken');
+                    authToken = null;
+                    showLogin();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                localStorage.removeItem('authToken');
+                authToken = null;
+                showLogin();
+            }
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const loginData = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
+            setLoading('loginBtn', 'loginBtnText', 'loginLoader', true);
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (data.user.role === 'owner') {
+                        authToken = data.token;
+                        currentUser = data.user;
+                        localStorage.setItem('authToken', authToken);
+                        showAlert('loginAlert', 'Login successful!', 'success');
+                        setTimeout(() => showDashboard(), 1000);
+                    } else {
+                        showAlert('loginAlert', 'Access denied. Owner privileges required.', 'error');
+                    }
+                } else {
+                    showAlert('loginAlert', data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('loginAlert', 'Network error. Please try again.', 'error');
+            } finally {
+                setLoading('loginBtn', 'loginBtnText', 'loginLoader', false);
+            }
+        }
+        
+        async function handleCreateUser(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const userData = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                role: formData.get('role')
+            };
+            
+            setLoading('createUserBtn', 'createUserBtnText', 'createUserLoader', true);
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/create-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('createUserAlert', 'User created successfully!', 'success');
+                    document.getElementById('createUserFormElement').reset();
+                    setTimeout(() => showDashboard(), 2000);
+                } else {
+                    showAlert('createUserAlert', data.error || 'Failed to create user', 'error');
+                }
+            } catch (error) {
+                console.error('Create user error:', error);
+                showAlert('createUserAlert', 'Network error. Please try again.', 'error');
+            } finally {
+                setLoading('createUserBtn', 'createUserBtnText', 'createUserLoader', false);
+            }
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('authToken');
+            authToken = null;
+            currentUser = null;
+            showLogin();
+            showAlert('loginAlert', 'Logged out successfully', 'success');
+        }
+        
+        function showLogin() {
+            loginForm.classList.remove('hidden');
+            dashboard.classList.add('hidden');
+            createUserForm.classList.add('hidden');
+            clearAlerts();
+        }
+        
+        function showDashboard() {
+            loginForm.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            createUserForm.classList.add('hidden');
+            
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userEmail').textContent = currentUser.email;
+                const roleElement = document.getElementById('userRole');
+                roleElement.textContent = currentUser.role;
+                roleElement.className = `role-badge role-${currentUser.role}`;
+            }
+            
+            clearAlerts();
+        }
+        
+        function showCreateUserForm() {
+            loginForm.classList.add('hidden');
+            dashboard.classList.add('hidden');
+            createUserForm.classList.remove('hidden');
+            clearAlerts();
+        }
+        
+        function showAlert(elementId, message, type) {
+            const alertElement = document.getElementById(elementId);
+            alertElement.textContent = message;
+            alertElement.className = `alert alert-${type}`;
+            alertElement.classList.remove('hidden');
+        }
+        
+        function clearAlerts() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.classList.add('hidden');
+                alert.textContent = '';
+            });
+        }
+        
+        function setLoading(btnId, textId, loaderId, isLoading) {
+            const btn = document.getElementById(btnId);
+            const text = document.getElementById(textId);
+            const loader = document.getElementById(loaderId);
+            
+            if (isLoading) {
+                btn.disabled = true;
+                text.classList.add('hidden');
+                loader.classList.remove('hidden');
+            } else {
+                btn.disabled = false;
+                text.classList.remove('hidden');
+                loader.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

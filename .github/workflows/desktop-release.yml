@@ -1,0 +1,52 @@
+name: Release Desktop App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Prepare Desktop Frontend Dist
+        run: |
+          mkdir -p desktop/frontend-dist
+          cp -r frontend/dist/* desktop/frontend-dist/
+
+      - name: Install Desktop Dependencies
+        working-directory: desktop
+        run: npm ci
+
+      - name: Build and Package Desktop (Windows)
+        working-directory: desktop
+        run: npx electron-builder --win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            desktop/dist/*.exe
+            desktop/dist/*.blockmap
+          generate_release_notes: true

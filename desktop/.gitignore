@@ -1,0 +1,14 @@
+node_modules/
+dist/
+frontend-dist/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+.electron-builder-cache/
+.env
+.env.*
