@@ -22,7 +22,7 @@ jobs:
 
       - name: Install Frontend Dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Build Frontend
         working-directory: frontend
@@ -35,7 +35,7 @@ jobs:
 
       - name: Install Desktop Dependencies
         working-directory: desktop
-        run: npm ci
+        run: npm install
 
       - name: Build and Package Desktop (Windows)
         working-directory: desktop

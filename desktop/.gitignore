@@ -12,3 +12,4 @@ Thumbs.db
 .electron-builder-cache/
 .env
 .env.*
+package-lock.json
